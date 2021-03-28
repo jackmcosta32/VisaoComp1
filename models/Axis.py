@@ -8,7 +8,6 @@ class Axis:
             base: np.ndarray = None,
             coordinate: np.ndarray = None
     ):
-
         if base is None:
             base = np.eye(3)
         if coordinate is None:
@@ -57,3 +56,14 @@ class Axis:
             pivot='tail',
             length=self.length
         )
+
+    def move(
+            self,
+            movement_matrix: np.ndarray
+    ):
+        coordinate = np.ones(4)
+        coordinate[0:3] = self.coordinate
+        rotation_matrix = movement_matrix[0:3, 0:3]
+        coordinate = np.dot(movement_matrix, coordinate.T)
+        self.coordinate = coordinate[0:3]
+        self.base = np.dot(rotation_matrix, self.base)

@@ -38,17 +38,8 @@ class Actor(Object):
 
     def move(
             self,
-            rotation_angle: float = 0,
-            rotation_axis: str = None,
-            target_point: np.ndarray = None,
+            movement_matrix: np.ndarray = None,
     ):
-        # Extends the object movement to include the mesh movement
-        movement_matrix = super().get_movement_matrix(
-            target_point=target_point,
-            rotation_axis=rotation_axis,
-            rotation_angle=rotation_angle,
-        )
-
         # Updates the actor mesh matrix
         new_mesh_matrix = np.ones(self.mesh_matrix.shape)
         for i in range(self.mesh_matrix.shape[1]):
