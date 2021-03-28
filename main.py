@@ -1,33 +1,31 @@
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-from models.Axis import Axis
-from models.Object import Object
-from mpl_toolkits import mplot3d
+import sys
+
+from PyQt5.QtWidgets import QApplication
+from controllers.MainController import MainController
+from models.Actor import Actor
+from models.Camera import Camera
+from views.main.MainView import MainView
 
 
-def run():
-    # Creating the 3D scenery
-    fig = plt.figure(figsize=(15, 8))
-    axis = fig.add_subplot(111, projection='3d')
-    plt.ion()
-    plt.title("World Point of View")
+class App(QApplication):
+    def __init__(self, sys_argv):
+        super().__init__(sys_argv)
 
-    # Creating the actors
-    world_axis = Axis(plot_axis=axis)
-    actor_object = Object(
-        plot_axis=axis,
-        mesh_path="/home/joao/Documentos/Python/visao_comp1/public/stl/link.STL"
-    )
+        # Setup Actors
+        camera = Camera()
+        actor = Actor(mesh_path='/home/joao/Documentos/Python/visao_comp1/public/stl/link.STL')
 
-    while True:
-        plt.show()
-        plt.pause(0.5)
-        fig.canvas.draw()
-        fig.canvas.flush_events()
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        # Setup Controllers
+        main_controller = MainController(
+            actor=actor,
+            camera=camera
+        )
+
+        # Setup Views
+        self.main_view = MainView(controller=main_controller)
+        self.main_view.show()
 
 
-# Runs the main loop
-run()
+if __name__ == '__main__':
+    app = App(sys.argv)
+    sys.exit(app.exec_())

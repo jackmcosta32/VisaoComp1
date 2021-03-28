@@ -4,7 +4,6 @@ import numpy as np
 class Axis:
     def __init__(
             self,
-            plot_axis,
             length: float = 1,
             base: np.ndarray = None,
             coordinate: np.ndarray = None
@@ -17,14 +16,13 @@ class Axis:
 
         self.base = base
         self.length = length
-        self.plot_axis = plot_axis
         self.coordinate = coordinate
         previous_movement_matrix = np.eye(4)
         previous_movement_matrix[0:3, 3] = coordinate
         self.previous_movement_matrix = previous_movement_matrix
 
-    def draw(self):
-        self.plot_axis.quiver(
+    def draw(self, plot_axis):
+        plot_axis.quiver(
             self.coordinate[0],
             self.coordinate[1],
             self.coordinate[2],
@@ -36,7 +34,7 @@ class Axis:
             length=self.length
         )
 
-        self.plot_axis.quiver(
+        plot_axis.quiver(
             self.coordinate[0],
             self.coordinate[1],
             self.coordinate[2],
@@ -48,7 +46,7 @@ class Axis:
             length=self.length
         )
 
-        self.plot_axis.quiver(
+        plot_axis.quiver(
             self.coordinate[0],
             self.coordinate[1],
             self.coordinate[2],

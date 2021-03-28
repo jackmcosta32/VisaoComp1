@@ -8,51 +8,36 @@ from models.Axis import Axis
 class Object:
     def __init__(
             self,
-            plot_axis,
             coordinate: np.ndarray = None,
     ):
-        self.plot_axis = plot_axis
-        self.coordinate = coordinate
-        self.axis = Axis(plot_axis=plot_axis, coordinate=coordinate)
+        if coordinate is None:
+            coordinate = np.zeros(3)
 
-    def draw(self):
-        self.axis.draw()
+        self.coordinate = coordinate
+        self.axis = Axis(coordinate=coordinate)
+
+    def draw(self, plot_axis):
+        # Draws the object axis
+        self.axis.draw(plot_axis)
 
     def move(
             self,
-            rotation_angle: float = 0,
-            rotation_axis: str = None,
-            target_point: np.ndarray = None,
+            movement_matrix: np.ndarray
     ):
-        # Obtain current movement matrix
-        movement_matrix = self.__get_movement_matrix(
-            rotation_angle=rotation_angle,
-            rotation_axis=rotation_axis,
-            target_point=target_point
-        )
-
-        # Revert previous movement
-        # previous_movement_matrix = self.previous_movement_matrix
-        # previous_rotation_matrix = previous_movement_matrix[0:3, 0:3]
-        # previous_movement_matrix[0:3, 0:3] = previous_rotation_matrix.T
-        # previous_translation = previous_movement_matrix[0:3, 3]
-        # previous_movement_matrix[0:3, 3] = -np.dot(previous_rotation_matrix.T, previous_translation)
-
-        # Make the new transformation
+        # Updates the current object position according to the movement matrix
         coordinate = np.ones(4)
         coordinate[0:3] = self.coordinate
-        # coordinate = np.dot(np.dot(previous_movement_matrix, movement_matrix), coordinate.T)
         coordinate = np.dot(movement_matrix, coordinate.T)
-        # self.previous_movement_matrix = movement_matrix
         self.coordinate = coordinate[0: 3]
-        self.draw()
+        self.axis.coordinate = coordinate[0: 3]
 
-    def __get_movement_matrix(
+    def get_movement_matrix(
             self,
             rotation_angle: float = 0,
             rotation_axis: str = None,
             target_point: np.ndarray = None,
     ):
+        # Generates the movement matrix according to the params given
         if rotation_angle is not None:
             rotation_angle = self.__degrees_to_radians(rotation_angle)
         if target_point is None:

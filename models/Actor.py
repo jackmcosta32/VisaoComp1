@@ -8,7 +8,6 @@ from models.Object import Object
 class Actor(Object):
     def __init__(
             self,
-            plot_axis,
             mesh_path: str,
             coordinate: np.ndarray = None,
     ):
@@ -21,21 +20,21 @@ class Actor(Object):
         self.mesh_matrix = np.array([x.T, y.T, z.T, np.ones(x.size)])
 
         # Init object
-        super().__init__(plot_axis=plot_axis, coordinate=coordinate)
+        super().__init__(coordinate=coordinate)
 
-    def draw(self):
+    def draw(self, plot_axis):
         # Draws the actor mesh surfaces and lines
-        self.plot_axis.plot(self.mesh_matrix[0, :], self.mesh_matrix[1, :], self.mesh_matrix[2, :], 'b')
-        self.plot_axis.add_collection3d(art3d.Poly3DCollection(self.mesh_vectors))
-        self.plot_axis.add_collection3d(art3d.Line3DCollection(
-            self.mesh_vectors,
-            colors='k',
-            linewidths=0.2,
-            linestyles='-'
-        ))
+        plot_axis.plot(self.mesh_matrix[0, :], self.mesh_matrix[1, :], self.mesh_matrix[2, :], 'b')
+        # plot_axis.add_collection3d(art3d.Poly3DCollection(self.mesh_vectors))
+        # plot_axis.add_collection3d(art3d.Line3DCollection(
+        #     self.mesh_vectors,
+        #     colors='k',
+        #     linewidths=0.2,
+        #     linestyles='-'
+        # ))
 
         # Draws the object axis
-        super().draw()
+        super().draw(plot_axis)
 
     def move(
             self,
@@ -44,19 +43,20 @@ class Actor(Object):
             target_point: np.ndarray = None,
     ):
         # Extends the object movement to include the mesh movement
-        movement_matrix = super().__get_movement_matrix(
+        movement_matrix = super().get_movement_matrix(
             target_point=target_point,
             rotation_axis=rotation_axis,
             rotation_angle=rotation_angle,
         )
 
         # Updates the actor mesh matrix
-        new_mesh_matrix = np.zeros(self.mesh_matrix.shape)
+        new_mesh_matrix = np.ones(self.mesh_matrix.shape)
         for i in range(self.mesh_matrix.shape[1]):
-            coordinate = np.ones(4)
-            coordinate[0:3] = self.mesh_matrix[0:3, i]
+            coordinate = self.mesh_matrix[:, i]
             coordinate = np.dot(movement_matrix, coordinate.T)
-            new_mesh_matrix[0:3, i] = coordinate[0:3, i]
+            new_mesh_matrix[:, i] = coordinate
+
+        self.mesh_matrix = new_mesh_matrix
 
         # Updates the actor axis coordinates
-
+        super().move(movement_matrix=movement_matrix)
