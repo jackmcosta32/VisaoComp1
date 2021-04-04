@@ -13,7 +13,7 @@ class App(QApplication):
 
         # Setup Actors
         camera = Camera()
-        actor = Actor(mesh_path='/home/joao/Documentos/Python/visao_comp1/public/stl/link.STL')
+        actor = Actor(mesh_path='/home/joao/Documentos/Python/visao_comp1/public/stl/coin.STL')
 
         # Setup Controllers
         main_controller = MainController(

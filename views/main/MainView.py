@@ -147,6 +147,24 @@ class MainView(QMainWindow):
         return tab
 
     def cameraControlsTab(self):
+        # Adds the radio buttons for the reference axis selection
+        ref_radio_group = QButtonGroup()
+        ref_radio_layout = QHBoxLayout()
+        ref_axes = ['actor', 'camera', 'world']
+        for index, axis in enumerate(ref_axes):
+            radio_label = '{} axis'.format(axis)
+            radio = QRadioButton(radio_label)
+            radio.value = axis
+            ref_radio_layout.addWidget(radio)
+            ref_radio_group.addButton(radio, index)
+
+        # Sets the world axis as the default rotation axis
+        ref_radio_group.button(2).setChecked(True)
+
+        # Saves the reference for the ref radio group
+        self.camera_controls['ref_radio_group'] = ref_radio_group
+
+        # Adds the sliders layout
         sliders_layout = QGridLayout()
         sliders_layout.setSpacing(10)
 
@@ -162,7 +180,24 @@ class MainView(QMainWindow):
             slider.valueChanged[int].connect(self.onCameraControlsChange)
             sliders_layout.addWidget(slider, index, 1)
 
-        # Adds a knob for the actor rotation control
+        # Adds the radio buttons for the rotation axis selection
+        rot_radio_group = QButtonGroup()
+        rot_radio_layout = QHBoxLayout()
+        rot_axes = ['x', 'y', 'z']
+        for index, axis in enumerate(rot_axes):
+            radio_label = '{} axis'.format(axis)
+            radio = QRadioButton(radio_label)
+            radio.value = axis
+            rot_radio_layout.addWidget(radio)
+            rot_radio_group.addButton(radio, index)
+
+        # Sets the world axis as the default rotation axis
+        rot_radio_group.button(2).setChecked(True)
+
+        # Saves the reference for the rotation radio group
+        self.camera_controls['rot_radio_group'] = rot_radio_group
+
+        # Adds a dial for the actor rotation control
         dial_layout = QHBoxLayout()
         dial = QDial()
         dial.setRange(0, 360)
@@ -172,7 +207,9 @@ class MainView(QMainWindow):
 
         # Setup the tab layout
         layout = QVBoxLayout()
+        layout.addLayout(ref_radio_layout)
         layout.addLayout(sliders_layout)
+        layout.addLayout(rot_radio_layout)
         layout.addLayout(dial_layout)
         layout.addStretch()
         tab = QWidget()
@@ -205,11 +242,17 @@ class MainView(QMainWindow):
             self.camera_controls['y_slider'].value(),
             self.camera_controls['z_slider'].value()
         ])
+
+        reference_axis = self.camera_controls['ref_radio_group'].checkedButton().value
+        rotation_axis = self.camera_controls['rot_radio_group'].checkedButton().value
         rotation_angle = self.camera_controls['rotation_dial'].value()
+
         self.controller.move_camera(
             target_coordinate=target_coordinate,
             rotation_angle=rotation_angle,
-            rotation_axis='z'
+            rotation_axis=rotation_axis,
+            reference_axis=reference_axis
         )
         self.controller.draw_world_components(plot_axis=self.world_chart.axis)
         self.world_chart.axis_equal_3D()
+
