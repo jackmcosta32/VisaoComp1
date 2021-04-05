@@ -30,11 +30,17 @@ class Chart(FigureCanvas):
         super().__init__(fig)
 
         if aspect == 'equal':
-            self.axis_equal_3D()
+            self.__axis_equal_3D()
         elif aspect is not None:
             self.axis.set_aspect(aspect)
 
-    def axis_equal_3D(self):
+    def axis_equal(self):
+        if self.axis.name == '3d':
+            self.__axis_equal_3D()
+        else:
+            self.axis.set_aspect('equal')
+
+    def __axis_equal_3D(self):
         extents = np.array([getattr(self.axis, 'get_{}lim'.format(dim))() for dim in 'xyz'])
         sz = extents[:, 1] - extents[:, 0]
         centers = np.mean(extents, axis=1)

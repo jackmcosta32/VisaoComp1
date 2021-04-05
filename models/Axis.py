@@ -4,7 +4,7 @@ import numpy as np
 class Axis:
     def __init__(
             self,
-            length: float = 1,
+            length: float = 10,
             base: np.ndarray = None,
             coordinate: np.ndarray = None
     ):

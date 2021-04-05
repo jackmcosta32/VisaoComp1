@@ -13,6 +13,22 @@ class MainController:
         self.camera = camera
         self.world_axis = Axis()
 
+    def update_camera_params(
+            self,
+            f: float = 1,
+            sx: float = 1,
+            sy: float = 1,
+            so: float = 0,
+            ox: float = 0,
+            oy: float = 0,
+    ):
+        self.camera.f = f
+        self.camera.sx = sx
+        self.camera.sy = sy
+        self.camera.so = so
+        self.camera.ox = ox
+        self.camera.oy = oy
+
     def move_camera(
             self,
             target_coordinate: np.ndarray = None,
@@ -43,8 +59,10 @@ class MainController:
             reference_axis
         )
 
-    def draw_camera_view(self):
-        print('GET CAMERA VIEW')
+    def draw_camera_view(self, plot_axis):
+        plot_axis.clear()
+        self.camera.get_camera_view(plot_axis, self.actor)
+        plot_axis.invert_yaxis()
 
     def draw_world_components(self, plot_axis):
         plot_axis.clear()
