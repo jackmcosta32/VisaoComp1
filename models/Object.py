@@ -29,8 +29,9 @@ class Object:
         coordinate = np.dot(movement_matrix, coordinate.T)
         self.coordinate = coordinate[0: 3]
 
-        # Moves the axis base as well
-        self.axis.move(movement_matrix)
+        # Updates the axis base and coordinate as well
+        self.axis.coordinate = coordinate[0: 3]
+        self.axis.base = movement_matrix[0:3, 0:3]
 
         # Stores the previous movement made
         self.previous_movement_matrix = movement_matrix

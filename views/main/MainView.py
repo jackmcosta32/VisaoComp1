@@ -205,6 +205,12 @@ class MainView(QMainWindow):
             callback=self.onCameraControlsChange
         )
 
+        # Set the default values
+        self.camera_controls['z_slider'].setValue(50)
+        self.camera_controls['y_slider'].setValue(-50)
+        self.camera_controls['rotation_dial'].setValue(90)
+        self.camera_controls['rot_radio_group'].button(0).setChecked(True)
+
         # Setup the tab layout
         layout = QVBoxLayout()
         layout.addWidget(movement_controls)

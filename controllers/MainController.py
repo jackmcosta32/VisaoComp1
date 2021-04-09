@@ -103,19 +103,19 @@ class MainController:
 
         # Get's the next movement matrix
         if type(object).__name__ == reference_axis.capitalize():
-            # Rotates the object at his own axis than moves it to it's final position
-            movement_matrix = self.get_movement_matrix(
-                current_point=object.axis.coordinate,
-                target_point=target_coordinate,
+            # Rotates the object at his own axis
+            rotation_matrix = self.get_movement_matrix(
                 rotation_angle=rotation_angle,
                 rotation_axis=rotation_axis
             )
+
+            # Moves the object according to its bases
+            target_coordinate = np.dot(rotation_matrix[0:3, 0:3], target_coordinate.T)
+            translation_matrix = self.get_movement_matrix(target_point=target_coordinate)
+            movement_matrix = np.dot(translation_matrix, rotation_matrix)
         else:
             # Moves the object back to the reference axis
-            neg_translation_matrix = self.get_movement_matrix(
-                current_point=object.coordinate,
-                target_point=target_coordinate - axis_coordinate
-            )
+            neg_translation_matrix = self.get_movement_matrix(target_point=target_coordinate-axis_coordinate)
 
             # Rotates the object at the selected axis
             rotation_matrix = self.get_movement_matrix(
@@ -124,10 +124,7 @@ class MainController:
             )
 
             # Moves the object to it's final position
-            pos_translation_matrix = self.get_movement_matrix(
-                current_point=np.zeros(3),
-                target_point=axis_coordinate
-            )
+            pos_translation_matrix = self.get_movement_matrix(target_point=axis_coordinate)
 
             # Gets the new movement matrix
             movement_matrix = np.linalg.multi_dot([

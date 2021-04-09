@@ -16,9 +16,6 @@ class Axis:
         self.base = base
         self.length = length
         self.coordinate = coordinate
-        previous_movement_matrix = np.eye(4)
-        previous_movement_matrix[0:3, 3] = coordinate
-        self.previous_movement_matrix = previous_movement_matrix
 
     def draw(self, plot_axis):
         plot_axis.quiver(
@@ -56,14 +53,3 @@ class Axis:
             pivot='tail',
             length=self.length
         )
-
-    def move(
-            self,
-            movement_matrix: np.ndarray
-    ):
-        coordinate = np.ones(4)
-        coordinate[0:3] = self.coordinate
-        rotation_matrix = movement_matrix[0:3, 0:3]
-        coordinate = np.dot(movement_matrix, coordinate.T)
-        self.coordinate = coordinate[0:3]
-        self.base = np.dot(rotation_matrix, self.base)

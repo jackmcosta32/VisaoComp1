@@ -41,13 +41,7 @@ class Actor(Object):
             movement_matrix: np.ndarray = None,
     ):
         # Updates the actor mesh matrix
-        new_mesh_matrix = np.ones(self.mesh_matrix.shape)
-        for i in range(self.mesh_matrix.shape[1]):
-            coordinate = self.mesh_matrix[:, i]
-            coordinate = np.dot(movement_matrix, coordinate.T)
-            new_mesh_matrix[:, i] = coordinate
-
-        self.mesh_matrix = new_mesh_matrix
+        self.mesh_matrix = np.dot(movement_matrix, self.mesh_matrix)
 
         # Updates the actor axis coordinates
         super().move(movement_matrix=movement_matrix)
