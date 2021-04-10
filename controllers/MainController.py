@@ -110,11 +110,11 @@ class MainController:
             )
 
             # Moves the object according to its bases
-            target_coordinate = np.dot(rotation_matrix[0:3, 0:3], target_coordinate.T)
             translation_matrix = self.get_movement_matrix(target_point=target_coordinate)
             movement_matrix = np.dot(translation_matrix, rotation_matrix)
         else:
             # Moves the object back to the reference axis
+            target_coordinate = np.dot(self.get_rotation_matrix(rotation_angle, rotation_axis), target_coordinate.T)
             neg_translation_matrix = self.get_movement_matrix(target_point=target_coordinate-axis_coordinate)
 
             # Rotates the object at the selected axis
@@ -142,33 +142,41 @@ class MainController:
             rotation_angle: float = 0,
             rotation_axis: str = None,
     ):
+        movement_matrix = np.eye(4)
+        movement_matrix[0:3, 3] = target_point - current_point
+        movement_matrix[0:3, 0:3] = self.get_rotation_matrix(rotation_angle, rotation_axis)
+
+        return movement_matrix
+
+    def get_rotation_matrix(
+            self,
+            rotation_angle: float = 0,
+            rotation_axis: str = None
+    ):
         # Generates the new movement matrix according to the params given
         if rotation_angle is not None:
             rotation_angle = self.__degrees_to_radians(rotation_angle)
 
-        movement_matrix = np.eye(4)
-        movement_matrix[0:3, 3] = target_point - current_point
-
         if rotation_axis == 'x':
-            movement_matrix[0:3, 0:3] = np.array([
+            rotation_matrix = np.array([
                 [1, 0, 0],
                 [0, cos(rotation_angle), -sin(rotation_angle)],
                 [0, sin(rotation_angle), cos(rotation_angle)]
             ])
         elif rotation_axis == 'y':
-            movement_matrix[0:3, 0:3] = np.array([
+            rotation_matrix = np.array([
                 [cos(rotation_angle), 0, -sin(rotation_angle)],
                 [0, 1, 0],
                 [sin(rotation_angle), 0, cos(rotation_angle)]
             ])
         else:
-            movement_matrix[0:3, 0:3] = np.array([
+            rotation_matrix = np.array([
                 [cos(rotation_angle), -sin(rotation_angle), 0],
                 [sin(rotation_angle), cos(rotation_angle), 0],
                 [0, 0, 1]
             ])
 
-        return movement_matrix
+        return rotation_matrix
 
     def get_reverse_movement_matrix(
             self,

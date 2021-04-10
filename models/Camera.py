@@ -21,7 +21,45 @@ class Camera(Object):
         self.so = so
         self.ox = ox
         self.oy = oy
+
+        # Adds the camera mesh
+        self.mesh_matrix = np.array([
+            [-5, -5, 0, 1],
+            [-5, 5, 0, 1],
+            [-5, 5, 5, 1],
+            [-5, 5, 0, 1],
+            [5, 5, 0, 1],
+            [5, 5, 5, 1],
+            [5, 5, 0, 1],
+            [5, -5, 0, 1],
+            [5, -5, 5, 1],
+            [5, -5, 0, 1],
+            [-5, -5, 0, 1],
+            [-5, -5, 5, 1],
+            [-5, 5, 5, 1],
+            [5, 5, 5, 1],
+            [5, -5, 5, 1],
+            [-5, -5, 5, 1],
+        ]).T
+
         super().__init__(coordinate)
+
+    def move(
+            self,
+            movement_matrix: np.ndarray
+    ):
+        # Moves the camera mesh
+        self.mesh_matrix = np.dot(movement_matrix, self.mesh_matrix)
+
+        # Moves the actor axis
+        super().move(movement_matrix)
+
+    def draw(self, plot_axis):
+        # Updates the camera mesh matrix
+        plot_axis.plot(self.mesh_matrix[0, :], self.mesh_matrix[1, :], self.mesh_matrix[2, :], 'b')
+
+        # Draws the camera axis
+        super().draw(plot_axis)
 
     def get_camera_view(self, plot_axis, actor: Actor):
         # Plotting the 2D image projection from the camera point of view

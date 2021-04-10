@@ -206,10 +206,11 @@ class MainView(QMainWindow):
         )
 
         # Set the default values
-        self.camera_controls['z_slider'].setValue(50)
-        self.camera_controls['y_slider'].setValue(-50)
-        self.camera_controls['rotation_dial'].setValue(90)
+        self.camera_controls['z_slider'].setValue(-50)
+        self.camera_controls['y_slider'].setValue(50)
         self.camera_controls['rot_radio_group'].button(0).setChecked(True)
+        self.camera_controls['rotation_dial'].setValue(90)
+        self.camera_controls['f_slider'].setValue(5)
 
         # Setup the tab layout
         layout = QVBoxLayout()
